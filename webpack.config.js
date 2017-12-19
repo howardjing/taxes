@@ -8,7 +8,8 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [new HtmlWebpackPlugin({
-    title: 'taxessssssss'
+    title: 'federal income taxessssssss',
+    template: 'src/index.html.ejs',
   })],
   module: {
     rules: [
