@@ -1,50 +1,42 @@
 // @flow
-import React, { PureComponent } from 'react';
-import styled from 'styled-components';
-import { buildBrackets, federalIncomeTaxBrackets, sumBrackets } from './compute-taxes';
+import React from 'react';
+import { buildBrackets, federalIncomeTax } from './compute-taxes';
 import type { Bracket } from './compute-taxes';
+import TaxBrackets from './tax-brackets';
+import dollars from './format-dollars';
 
-// https://stackoverflow.com/questions/149055/how-can-i-format-numbers-as-dollars-currency-string-in-javascript
-const dollars = (n: number): string => `$${n.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')}`;
+const BRACKETS_2017: Bracket[] = buildBrackets([
+  [9325, 0.1],
+  [37950, 0.15],
+  [91900, 0.25],
+  [191650, 0.28],
+  [416700, 0.33],
+  [418400, 0.35],
+  [Infinity, 0.396],
+]);
 
-type Props = {
-  brackets: Bracket[],
-  income: number,
-};
+const income = 100000;
+const intervals = [];
+for (let i=1000; i <= 500000; i += 1000) {
+  intervals.push(i);
+}
 
-const BracketWrapper = styled.div`
-  display: inline-block;
-  background-color: green;
-  margin: 0 10px 0 0;
-  height: 60px;
-`;
-
-const Taxed = styled.div`
-  height: 100%;
-  background-color: purple;
-  float: left;
-`;
-
-const App = ({ brackets, income }: Props) => {
-  const taxBrackets = federalIncomeTaxBrackets(brackets, income);
-  const taxes = sumBrackets(taxBrackets);
-  const rate = taxes / income;
-  return (
-    <div>
-      <h1>Income: {dollars(income)} | Taxed: {dollars(taxes)} | Rate: {(rate * 100).toFixed(2)}%</h1>
-      <div>
-        {taxBrackets.map(bracket => {
-          const bracketWidth = bracket.length / income * 90;
-          const taxedWidth = bracket.percent * 100;
-          return (
-            <BracketWrapper key={bracket.cap} style={{ width: `${bracketWidth}%` }}>
-              <Taxed style={{ width: `${taxedWidth}%` }}>{dollars(bracket.taxes)}</Taxed>
-            </BracketWrapper>
-          )
-        })}
-      </div>
-    </div>
-  )
-};
+const App = () => (
+  <div>
+    <TaxBrackets brackets={BRACKETS_2017} income={income} />
+    <ul>
+      {intervals.map(income => {
+        const taxes = federalIncomeTax(BRACKETS_2017, income);
+        const rate = taxes / income;
+        const formattedRate = (rate * 100).toFixed(2)
+        return (
+          <li key={income}>
+            taxes: {dollars(income)} | rate: {formattedRate}%
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+)
 
 export default App;
