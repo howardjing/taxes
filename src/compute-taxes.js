@@ -67,7 +67,7 @@ const federalIncomeTaxBrackets = (brackets: Bracket[], income: number): Bracket[
 }
 
 /**
- * all brackets that are strictly less than the given income
+ * the set of relevant brackets that strictly encompasses the given income.
  */
 const relevantBrackets = (brackets: Bracket[], income: Currency): Bracket[] => {
   const index = brackets.findIndex(bracket => bracket.max > income)

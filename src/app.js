@@ -10,7 +10,7 @@ import {
   FlexibleXYPlot,
   MarkSeries,
 } from 'react-vis';
-import { buildBrackets, federalIncomeTax } from './compute-taxes';
+import { buildBrackets, federalIncomeTax, federalIncomeTaxBrackets } from './compute-taxes';
 import type { Bracket, Currency } from './compute-taxes';
 import TaxBrackets from './tax-brackets';
 import dollars from './format-dollars';
@@ -25,20 +25,25 @@ const BRACKETS_2017: Bracket[] = buildBrackets([
   [Infinity, 0.396],
 ]);
 
-// TODO: intervals should by dynamic I guess -- right now
+// TODO: salarys should by dynamic I guess -- right now
 // if user enters an income more than 1 million, it won't be
 // represented in the graph
-const intervals = [];
+const salarys = [];
 const MAX = 1000000;
 for (let i=1000; i <= 1000000; i += 1000) {
-  intervals.push(i);
+  salarys.push(i);
 }
 
-const data = intervals.map(sampleIncome => {
+const taxIntervals = federalIncomeTaxBrackets(BRACKETS_2017, MAX).map(bracket => [
+  { x: bracket.min, y: bracket.rate },
+  { x: bracket.max, y: bracket.rate },
+]);
+
+const computedTaxRates = salarys.map(sampleIncome => {
   const taxes = federalIncomeTax(BRACKETS_2017, sampleIncome);
   const rate = taxes / sampleIncome;
   return { x: sampleIncome, y: rate };
-})
+});
 
 const Container = styled.div`
   width: 100%;
@@ -95,7 +100,10 @@ class App extends React.Component<Props, State> {
             <XAxis title="gross income" />
             <YAxis title="tax rate" />
             <MarkSeries data={[{ x: income, y: rate }]}/>
-            <LineSeries data={data} />
+            <LineSeries data={computedTaxRates} />
+            {taxIntervals.map((data, i) =>
+              <LineSeries key={i} data={data} strokeStyle="dashed" />
+            )}
           </FlexibleXYPlot>
         </GraphContainer>
       </Container>
