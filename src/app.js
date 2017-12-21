@@ -6,7 +6,7 @@ import {
   YAxis,
   HorizontalGridLines,
   VerticalGridLines,
-  MarkSeries,
+  LineSeries,
   FlexibleXYPlot,
 } from 'react-vis';
 import { buildBrackets, federalIncomeTax } from './compute-taxes';
@@ -50,7 +50,7 @@ const App = () => (
         <VerticalGridLines />
         <XAxis title="gross income" />
         <YAxis title="tax rate" />
-        <MarkSeries
+        <LineSeries
           data={intervals.map(income => {
             const taxes = federalIncomeTax(BRACKETS_2017, income);
             const rate = taxes / income;
