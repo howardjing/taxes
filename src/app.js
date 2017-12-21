@@ -31,7 +31,6 @@ for (let i=1000; i <= 1000000; i += 1000) {
   intervals.push(i);
 }
 
-
 const Container = styled.div`
   width: 100%;
   height: 100%;

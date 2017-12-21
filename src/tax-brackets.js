@@ -33,10 +33,10 @@ const TaxBrackets = ({ brackets, income }: Props) => {
       <div>
         {taxBrackets.map(bracket => {
           const bracketWidth = bracket.length / income * 90;
-          const taxedWidth = bracket.percent * 100;
+          const taxedWidth = bracket.rate * 100;
           return (
-            <BracketWrapper key={bracket.cap} style={{ width: `${bracketWidth}%` }}>
-              <Taxed style={{ width: `${taxedWidth}%` }}>{dollars(bracket.taxes)}</Taxed>
+            <BracketWrapper key={bracket.max} style={{ width: `${bracketWidth}%` }}>
+              <Taxed style={{ width: `${taxedWidth}%` }}>{dollars(bracket.taxed)}</Taxed>
             </BracketWrapper>
           )
         })}
