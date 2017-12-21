@@ -83,4 +83,6 @@ export {
 
 export type {
   Bracket,
+  Decimal,
+  Currency,
 };

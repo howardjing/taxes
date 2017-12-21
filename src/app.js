@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import styled from 'styled-components';
 import {
   XAxis,
@@ -8,12 +8,12 @@ import {
   VerticalGridLines,
   LineSeries,
   FlexibleXYPlot,
+  MarkSeries,
 } from 'react-vis';
 import { buildBrackets, federalIncomeTax } from './compute-taxes';
-import type { Bracket } from './compute-taxes';
+import type { Bracket, Currency } from './compute-taxes';
 import TaxBrackets from './tax-brackets';
 import dollars from './format-dollars';
-
 
 const BRACKETS_2017: Bracket[] = buildBrackets([
   [9325, 0.1],
@@ -25,11 +25,20 @@ const BRACKETS_2017: Bracket[] = buildBrackets([
   [Infinity, 0.396],
 ]);
 
-const income = 100000;
+// TODO: intervals should by dynamic I guess -- right now
+// if user enters an income more than 1 million, it won't be
+// represented in the graph
 const intervals = [];
+const MAX = 1000000;
 for (let i=1000; i <= 1000000; i += 1000) {
   intervals.push(i);
 }
+
+const data = intervals.map(sampleIncome => {
+  const taxes = federalIncomeTax(BRACKETS_2017, sampleIncome);
+  const rate = taxes / sampleIncome;
+  return { x: sampleIncome, y: rate };
+})
 
 const Container = styled.div`
   width: 100%;
@@ -40,25 +49,58 @@ const GraphContainer = styled.div`
   height: 50%;
 `;
 
-const App = () => (
-  <Container>
-    <TaxBrackets brackets={BRACKETS_2017} income={income} />
-    <GraphContainer>
-      <FlexibleXYPlot yDomain={[0, 1]}>
-        <HorizontalGridLines />
-        <VerticalGridLines />
-        <XAxis title="gross income" />
-        <YAxis title="tax rate" />
-        <LineSeries
-          data={intervals.map(income => {
-            const taxes = federalIncomeTax(BRACKETS_2017, income);
-            const rate = taxes / income;
-            return { x: income, y: rate };
-          })}
-        />
-      </FlexibleXYPlot>
-    </GraphContainer>
-  </Container>
-)
+type Props = {};
+
+type State = {
+  income: Currency,
+};
+
+class App extends React.Component<Props, State> {
+  state = {
+    income: 100000,
+  };
+
+  handleIncomeChange = (e: SyntheticEvent<HTMLInputElement>) => {
+    const { value } = e.currentTarget;
+    const income = parseInt(value, 10);
+    if (isNaN(income)) { return; }
+
+    this.setState(() => ({
+      income,
+    }));
+  };
+
+  render() {
+    const { income } = this.state;
+    const taxes = federalIncomeTax(BRACKETS_2017, income);
+    const rate = taxes / income;
+    return (
+      <Container>
+        <div>
+          gross income:
+          <input
+            type="number"
+            value={income}
+            onChange={this.handleIncomeChange}
+          />
+        </div>
+        <TaxBrackets brackets={BRACKETS_2017} income={income} />
+        <GraphContainer>
+          <FlexibleXYPlot
+            xDomain={[0, MAX]}
+            yDomain={[0, 1]}
+          >
+            <HorizontalGridLines />
+            <VerticalGridLines />
+            <XAxis title="gross income" />
+            <YAxis title="tax rate" />
+            <MarkSeries data={[{ x: income, y: rate }]}/>
+            <LineSeries data={data} />
+          </FlexibleXYPlot>
+        </GraphContainer>
+      </Container>
+    )
+  }
+}
 
 export default App;
