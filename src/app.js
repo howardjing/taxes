@@ -133,7 +133,7 @@ class App extends React.Component<Props, State> {
       <Container>
         <div>
           <div>
-            gross income:
+            taxable income:
             <input
               type="number"
               value={income}
@@ -155,6 +155,7 @@ class App extends React.Component<Props, State> {
             ))}
           </div>
         </div>
+        <h1>Taxable Income: {dollars(income)} | Taxed: {dollars(taxes)} | Rate: {(rate * 100).toFixed(2)}%</h1>
         <TaxBrackets brackets={brackets2017[filingOption]} income={income} />
         <GraphContainer>
           <FlexibleXYPlot
@@ -163,7 +164,7 @@ class App extends React.Component<Props, State> {
           >
             <HorizontalGridLines />
             <VerticalGridLines />
-            <XAxis title="gross income" />
+            <XAxis title="taxable income" />
             <YAxis title="tax rate" />
             <MarkSeries data={[{ x: income, y: rate }]}/>
             <LineSeries data={computedTaxRates[filingOption]} />

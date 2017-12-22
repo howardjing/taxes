@@ -1,7 +1,7 @@
 // @flow
 import React, { PureComponent } from 'react';
 import styled from 'styled-components';
-import { buildBrackets, federalIncomeTaxBrackets, sumBrackets } from './compute-taxes';
+import { federalIncomeTaxBrackets } from './compute-taxes';
 import type { Bracket } from './compute-taxes';
 import dollars from './format-dollars';
 
@@ -25,11 +25,8 @@ const Taxed = styled.div`
 
 const TaxBrackets = ({ brackets, income }: Props) => {
   const taxBrackets = federalIncomeTaxBrackets(brackets, income);
-  const taxes = sumBrackets(taxBrackets);
-  const rate = taxes / income;
   return (
     <div>
-      <h1>Income: {dollars(income)} | Taxed: {dollars(taxes)} | Rate: {(rate * 100).toFixed(2)}%</h1>
       <div>
         {taxBrackets.map(bracket => {
           const bracketWidth = bracket.length / income * 90;
