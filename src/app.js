@@ -98,15 +98,13 @@ const BracketsTable = styled.table`
   border-collapse: collapse;
 `;
 
-const BracketsTableData = styled.td`
+const BracketsTableHead = styled.th`
   border: 1px solid #eee;
+  background-color: ${({ active }: { active: boolean }) => active ? 'yellow' : 'initial'};
   padding: 5px 10px;
 `;
 
-const BracketsTableHead = styled.th`
-  border: 1px solid #eee;
-  padding: 5px 10px;
-`;
+const BracketsTableData = BracketsTableHead.withComponent('td');
 
 type Props = {};
 
@@ -114,7 +112,6 @@ type State = {
   income: Currency,
   filingOption: FilingOption,
 };
-
 
 class App extends React.Component<Props, State> {
   state = {
@@ -152,7 +149,7 @@ class App extends React.Component<Props, State> {
               <tr>
                 <th>rate</th>
                 {filingOptions.map(key => (
-                  <BracketsTableHead key={key}>{key}</BracketsTableHead>
+                  <BracketsTableHead key={key} active={key === filingOption}>{key}</BracketsTableHead>
                 ))}
               </tr>
             </thead>
@@ -167,7 +164,7 @@ class App extends React.Component<Props, State> {
                       `${dollars(bracket.min)}+`;
 
                     return (
-                      <BracketsTableData key={`${key}-${i}`}>
+                      <BracketsTableData key={`${key}-${i}`} active={key === filingOption}>
                         {data}
                       </BracketsTableData>
                     );
