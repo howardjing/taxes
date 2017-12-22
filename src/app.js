@@ -93,6 +93,21 @@ const GraphContainer = styled.div`
   height: 50%;
 `;
 
+const BracketsTable = styled.table`
+  border: 1px solid #eee;
+  border-collapse: collapse;
+`;
+
+const BracketsTableData = styled.td`
+  border: 1px solid #eee;
+  padding: 5px 10px;
+`;
+
+const BracketsTableHead = styled.th`
+  border: 1px solid #eee;
+  padding: 5px 10px;
+`;
+
 type Props = {};
 
 type State = {
@@ -132,6 +147,35 @@ class App extends React.Component<Props, State> {
     return (
       <Container>
         <div>
+          <BracketsTable>
+            <thead>
+              <tr>
+                <th>rate</th>
+                {filingOptions.map(key => (
+                  <BracketsTableHead key={key}>{key}</BracketsTableHead>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {brackets2017.single.map((bracket, i) => (
+                <tr key={i}>
+                  <BracketsTableData>{(bracket.rate * 100).toFixed(2)}%</BracketsTableData>
+                  {filingOptions.map((key) => {
+                    const bracket = brackets2017[key][i];
+                    const data = isFinite(bracket.max) ?
+                      `${dollars(bracket.min)} – ${dollars(bracket.max)}` :
+                      `${dollars(bracket.min)}+`;
+
+                    return (
+                      <BracketsTableData key={`${key}-${i}`}>
+                        {data}
+                      </BracketsTableData>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </BracketsTable>
           <div>
             taxable income:
             <input
