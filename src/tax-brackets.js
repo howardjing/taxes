@@ -36,16 +36,29 @@ const TaxedLabel = styled.div`
   position: absolute;
 `;
 
+const Brace = styled.div`
+  display: flex;
+  align-items: flex-end;
+  box-sizing: border-box;
+  margin: 10px 0;
+  height: 10px;
+  width: 100%;
+  border: 1px solid black;
+  border-top: 0;
+`;
+
+const Tick = styled.div`
+  height: 10px;
+  background: repeating-linear-gradient(-45deg,
+    transparent,
+    transparent 3px,
+    #555 3px,
+    #555 6px
+  );
+  border-right: 1px solid black;
+`;
+
 const BracketInfo = styled.div`
-  &::before {
-    content: ' ';
-    display: block;
-    margin-top: 10px;
-    height: 10px;
-    width: 100%;
-    border: 1px solid black;
-    border-top: 0;
-  }
 `;
 
 const percent = (n: string | number) => `${n}%`;
@@ -63,6 +76,9 @@ const TaxBrackets = ({ brackets, income }: Props) => {
               <TaxedLabel>{dollars(bracket.length)}</TaxedLabel>
               <Taxed style={{ width: percent(taxedWidth) }} />
             </BracketComponent>
+            <Brace>
+              <Tick style={{ width: percent(taxedWidth) }} />
+            </Brace>
             <BracketInfo>
                <div>{dollars(bracket.length)} × {percent((bracket.rate * 100).toFixed(2))}</div>
                <div>{dollars(bracket.taxed)}</div>
